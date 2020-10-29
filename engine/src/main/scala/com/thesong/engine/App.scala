@@ -29,6 +29,7 @@ object App {
         case Nil =>{}
         case tail => {
           println(s"对不起，无法识别：${tail.mkString(" ")}")
+
         }
       }
     }
@@ -37,8 +38,8 @@ object App {
 
 
   def main(args: Array[String]): Unit = {
-//    val tmpArgs = Array("-engine.zkServer","node01:8181","node02:8181")
-//    val stringToString = parseArgs(tmpArgs)
+    val tmpArgs = Array("-engine.zkServer","node01:8181","node02:8181")
+    val stringToString = parseArgs(tmpArgs)
   }
 
 }
