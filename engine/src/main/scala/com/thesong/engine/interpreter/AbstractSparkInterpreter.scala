@@ -12,7 +12,7 @@ import scala.tools.nsc.interpreter.Results
 object AbstractSparkInterpreter {
   // 反向肯定预测，匹配命令中的换行符
   // 命令：就是要执行的代码中的换行符
-  private[interpreter] val KEEP_NEWLINE_RE="""(?<\n)"""
+  private[interpreter] val KEEP_NEWLINE_RE = """(?<=\n)""".r
 }
 
 abstract class AbstractSparkInterpreter extends Interpreter {
