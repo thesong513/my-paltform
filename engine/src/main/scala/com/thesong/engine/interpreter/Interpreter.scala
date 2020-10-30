@@ -14,10 +14,10 @@ object Interpreter {
   // 执行成功的任务
   case class ExecuteSuccess(content:Object) extends ExecuteReponse
 
-  case class ExecuteError(executeName:String, //任务名称
+  case class ExecuteError(executeName: String, //任务名称
                           executeValue: String, //任务失败原因
-                          trackback:Seq[String] //失败的堆栈信息，一行一行的
-                         )
+                          trackback: Seq[String] //失败的堆栈信息，一行一行的
+                         ) extends ExecuteReponse
 
   case class ExecuteIncomplete() extends ExecuteReponse
 

@@ -1,11 +1,5 @@
 package com.thesong.engine
 
-/**
- * @Author thesong
- * @Date 2020/10/29 11:00
- * @Version 1.0
- */
-
 import java.util.concurrent.locks.ReentrantLock
 import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
 
@@ -15,8 +9,12 @@ import com.thesong.domain.engine
 import com.thesong.domain.engine.Job
 
 /**
- * Created by like
+ * @Author thesong
+ * @Date 2020/10/29 11:00
+ * @Version 1.0
  */
+
+
 class EngineSession(platEngine: String, _tag: Option[String]) {
   def engineInfo = platEngine
 
