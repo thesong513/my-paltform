@@ -1,5 +1,8 @@
 package com.thesong.engine
 
+import com.thesong.engine.interpreter.SparkInterpreter
+import org.apache.spark.SparkConf
+
 /**
  * @Author thesong
  * @Date 2020/10/28 13:35
@@ -38,8 +41,12 @@ object App {
 
 
   def main(args: Array[String]): Unit = {
-    val tmpArgs = Array("-engine.zkServer","node01:8181","node02:8181")
-    val stringToString = parseArgs(tmpArgs)
+    //    val tmpArgs = Array("-engine.zkServer","node01:8181","node02:8181")
+    //    val stringToString = parseArgs(tmpArgs)
+
+    val interpreter = new SparkInterpreter
+    val sparkConf: SparkConf = interpreter.start()
+    sparkConf.set("spark.driver.host", "localhost")
   }
 
 }
