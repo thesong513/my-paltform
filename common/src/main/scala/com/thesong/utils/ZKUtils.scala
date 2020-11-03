@@ -15,7 +15,7 @@ import scala.collection.Seq
  * @Version 1.0
  * @Describe
  */
-class ZKUtils {
+object ZKUtils {
   var zkClient: ZkClient = null
 
   val sessionTimeout = 60000
@@ -85,7 +85,48 @@ class ZKUtils {
    */
 
   def registerEngineInZookeeper(zkClient: ZkClient, id: Int, host: String, port: Int): Unit = {
-    val brokerIdPath = ZKUtils.engine_path
+    // 规划引擎路径
+    val brokerIdPath = ZKUtils.engine_path + s"/${id}"
+    // 引擎信息 ip:port
+    val brokeInfo = s"${host}:${port}"
+    try {
+      createPersistentPathIfNotExists(zkClient, ZKUtils.engine_path)
+      createEphemeralPathAndParentPathIfNotExits(zkClient, brokerIdPath, brokeInfo)
+    } catch {
+      case e: ZkNodeExistsException => {
+        throw new RuntimeException("注册失败，节点已存在")
+      }
+    }
+  }
+
+
+  def readDataMaybeNotExist(zkClient: ZkClient, path: String): (Option[String], Stat) = {
+    val stat = new Stat()
+    val dataAndStat = try {
+      (Some(zkClient.readData(path, stat)), stat)
+    } catch {
+      case e1: ZkNoNodeException => {
+        (None, Stat)
+      }
+      case e2: Throwable => {
+        throw e2
+      }
+    }
+    dataAndStat
+  }
+
+  // 获取引擎
+  def getPlatEngine(zkClient: ZkClient, engineId: Int): Option[PlatEngine] = {
+    //指定节点路径（engineId），获取不同的节点信息（不同引擎信息）
+    val dataAndStat: (Option[String], Stat) = ZKUtils.readDataMaybeNotExist(zkClient, ZKUtils.engine_path + s"/${engineId}")
+
+    dataAndStat._1 match {
+      case Some(engineInfo) => {
+        Some(PlatEngine(engineId, engineInfo))
+      }
+      case None => None
+    }
+
   }
 
 

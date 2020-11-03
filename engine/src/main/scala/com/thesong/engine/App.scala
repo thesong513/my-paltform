@@ -1,6 +1,8 @@
 package com.thesong.engine
 
 import com.thesong.engine.interpreter.SparkInterpreter
+import com.thesong.utils.{GlobalConfigUtils, ZKUtils}
+import org.I0Itec.zkclient.ZkClient
 import org.apache.spark.SparkConf
 
 /**
@@ -41,12 +43,23 @@ object App {
 
 
   def main(args: Array[String]): Unit = {
+
+    val argv = parseArgs(args)
     //    val tmpArgs = Array("-engine.zkServer","node01:8181","node02:8181")
     //    val stringToString = parseArgs(tmpArgs)
 
     val interpreter = new SparkInterpreter
     val sparkConf: SparkConf = interpreter.start()
     sparkConf.set("spark.driver.host", "localhost")
+    //获取zk集群ip和端口信息
+    val zkServer = argv.getOrElse("zkServer", GlobalConfigUtils.getProp("zk.servers"))
+
+    val zkClient: ZkClient = ZKUtils.getZkClient(zkServer)
+
+    println(zkServer)
+    println(zkClient)
+
+
   }
 
 }
