@@ -16,12 +16,21 @@
    limitations under the License.
 -->
 <configuration>
+<<<<<<< HEAD
   <!-- WARNING!!! This file is auto generated for documentation purposes ONLY! -->
   <!-- WARNING!!! Any changes you make to this file will be ignored by Hive.   -->
   <!-- WARNING!!! You must make your changes in hive-site.xml instead.         -->
   <!-- Hive Execution Parameters -->
 
   <property>
+=======
+    <!-- WARNING!!! This file is auto generated for documentation purposes ONLY! -->
+    <!-- WARNING!!! Any changes you make to this file will be ignored by Hive.   -->
+    <!-- WARNING!!! You must make your changes in hive-site.xml instead.         -->
+    <!-- Hive Execution Parameters -->
+
+    <property>
+>>>>>>> 88523bd46ce5d956ecddcd6350f04fd2c1de2075
         <name>javax.jdo.option.ConnectionUserName</name>
         <value>root</value>
     </property>
@@ -29,21 +38,34 @@
         <name>javax.jdo.option.ConnectionPassword</name>
         <value>unic@123</value>
     </property>
+<<<<<<< HEAD
    <property>
         <name>javax.jdo.option.ConnectionURL</name>
         <value>jdbc:mysql://slave2:3306/hive?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;useSSL=false</value>
     </property>
+=======
+    <!--    <property>-->
+    <!--        <name>javax.jdo.option.ConnectionURL</name>-->
+    <!--        <value>-->
+    <!--            jdbc:mysql://slave2:3306/hive?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;useSSL=false-->
+    <!--        </value>-->
+    <!--    </property>-->
+>>>>>>> 88523bd46ce5d956ecddcd6350f04fd2c1de2075
     <property>
         <name>javax.jdo.option.ConnectionDriverName</name>
         <value>com.mysql.jdbc.Driver</value>
     </property>
+<<<<<<< HEAD
         <!-- 到此结束代码 -->
+=======
+>>>>>>> 88523bd46ce5d956ecddcd6350f04fd2c1de2075
 
 
     <property>
         <name>hive.server2.support.dynamic.service.discovery</name>
         <value>true</value>
     </property>
+<<<<<<< HEAD
  
 <property>
 <name>hive.server2.zookeeper.namespace</name>
@@ -70,4 +92,32 @@
 <name>hive.server2.thrift.port</name>
 <value>10001</value>
 </property>
+=======
+
+    <property>
+        <name>hive.server2.zookeeper.namespace</name>
+        <value>hiveserver2_zk</value>
+    </property>
+
+    <property>
+        <name>hive.zookeeper.quorum</name>
+        <value>slave1:2181,slave2:2181,slave3:2181</value>
+    </property>
+
+    <property>
+        <name>hive.zookeeper.client.port</name>
+        <value>2181</value>
+    </property>
+
+
+    <property>
+        <name>hive.server2.thrift.bind.host</name>
+        <value>0.0.0.0</value>
+    </property>
+
+    <property>
+        <name>hive.server2.thrift.port</name>
+        <value>10001</value>
+    </property>
+>>>>>>> 88523bd46ce5d956ecddcd6350f04fd2c1de2075
 </configuration>

@@ -17,10 +17,9 @@ class GlobalConfigUtils {
 
   private def conf = ConfigFactory.load()
 
-  def heartColumnFamily = {
-    "MM" //conf.getString("heart.table.columnFamily")
-    val getProp = (argv: String) => conf.getString(argv)
-  }
+
+  def heartColumnFamily = "MM" //conf.getString("heart.table.columnFamily")
+  val getProp = (argv: String) => conf.getString(argv)
 
 
 }
