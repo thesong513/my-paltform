@@ -1,5 +1,7 @@
 package com.thesong.engine
 
+import akka.actor.ActorSystem
+import com.thesong.common.AkkaUtils
 import com.thesong.engine.interpreter.SparkInterpreter
 import com.thesong.utils.{GlobalConfigUtils, ZKUtils}
 import org.I0Itec.zkclient.ZkClient
@@ -59,6 +61,10 @@ object App {
     println(zkServer)
     println(zkClient)
 
+    val actorConf = AkkaUtils.getConfig(zkClient)
+    val actorSystem = ActorSystem("system", actorConf)
+
+    Thread.sleep(Integer.MAX_VALUE)
 
   }
 

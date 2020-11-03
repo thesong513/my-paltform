@@ -4,7 +4,6 @@ import com.thesong.domain.engine.PlatEngine
 import org.I0Itec.zkclient.ZkClient
 import org.I0Itec.zkclient.exception.{ZkMarshallingError, ZkNoNodeException, ZkNodeExistsException}
 import org.I0Itec.zkclient.serialize.ZkSerializer
-import org.apache.zookeeper.ZKUtil
 import org.apache.zookeeper.data.Stat
 
 import scala.collection.Seq
@@ -27,7 +26,6 @@ object ZKUtils {
   //actor的引擎路径
   var valid_engine_path = "/platform/valid_engine"
 
-
   def getZkClient(zkServers: String): ZkClient = {
     if (zkClient == null) {
       zkClient = new ZkClient(zkServers, sessionTimeout, connectionTimeout, new ZkSerializer {
@@ -35,7 +33,6 @@ object ZKUtils {
           try {
             // 对zk中存储的数据进行序列化
             o.toString.getBytes("UTF-8")
-
           } catch {
             case e: ZkMarshallingError => return null
           }
@@ -105,12 +102,8 @@ object ZKUtils {
     val dataAndStat = try {
       (Some(zkClient.readData(path, stat)), stat)
     } catch {
-      case e1: ZkNoNodeException => {
-        (None, Stat)
-      }
-      case e2: Throwable => {
-        throw e2
-      }
+      case e1: ZkNoNodeException => (None, stat)
+      case e2: Throwable => throw e2
     }
     dataAndStat
   }
@@ -127,6 +120,26 @@ object ZKUtils {
       case None => None
     }
 
+  }
+
+  //获取子节点
+  def getChildrenMayNotExist(client: ZkClient, path: String): Seq[String] = {
+    import scala.collection.JavaConversions._
+    try {
+      client.getChildren(path)
+    } catch {
+      case e: ZkNoNodeException => return Nil
+      case e2: Throwable => throw e2
+    }
+  }
+
+  // 从多台机器获取platformEngine
+  def getPlatEngineInCluster(zkClient: ZkClient): Seq[PlatEngine] = {
+    val childSortedData: Seq[String] = ZKUtils.getChildrenMayNotExist(zkClient, engine_path).sorted
+    val childrenSortedData2Int: Seq[Int] = childSortedData.map(x => x.toInt)
+    val engineDatas: Seq[Option[PlatEngine]] = childrenSortedData2Int.map(x => ZKUtils.getPlatEngine(zkClient, x))
+    val platEngines: Seq[PlatEngine] = engineDatas.filter(_.isDefined).map(x => x.get)
+    platEngines
   }
 
 

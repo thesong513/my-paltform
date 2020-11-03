@@ -1,13 +1,18 @@
 package com.thesong.common;
 
+import com.thesong.domain.engine;
 import com.thesong.utils.ZKUtils;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import org.I0Itec.zkclient.ZkClient;
+import scala.collection.Iterator;
+import scala.collection.Seq;
 
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -27,16 +32,45 @@ public class AkkaUtils {
             e.printStackTrace();
         }
 
+        final Seq<engine.PlatEngine> platEngineInCluster = ZKUtils.getPlatEngineInCluster(zkClient);
+        /**
+         * 首先创建集合把已经注册的id保存起来，用于对id进行顺序增加，防止重复的id多次进行注册
+         * (有可能在一台机器上启动多个引擎，同时引擎端口不能重复，防止端口冲突)
+         */
+
+        List engineIds = new ArrayList<Integer>();
+        List enginePorts = new ArrayList<Integer>();
+
+        Iterator<engine.PlatEngine> iterator = platEngineInCluster.iterator();
+        while (iterator.hasNext()) {
+            engine.PlatEngine engine = iterator.next();
+            engineIds.add(engine.engineId());
+            if (engine.engineInfo().contains(ip)) {
+                enginePorts.add(Integer.parseInt(engine.engineInfo().split(":")[1]));
+            }
+        }
+
+        while (enginePorts.size() != 0) {
+            while (enginePorts.contains(port)) {
+                port += 1;
+            }
+        }
+
+        while (engineIds.size() != 0) {
+            while (enginePorts.contains(id)) {
+                id += 1;
+            }
+        }
+
         //注册引擎到zk中去
         ZKUtils.registerEngineInZookeeper(zkClient, id, ip, port);
 
         //封装Akka信息
         Config config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port)
-                .withFallback(ConfigFactory.parseString("akka.actor.provider=akka.remote.RemoteActorRefprovider"))
+                .withFallback(ConfigFactory.parseString("akka.actor.provider=akka.remote.RemoteActorRefProvider"))
                 .withFallback(ConfigFactory.parseString("akka.remote.netty.tcp.hostname=" + ip))
                 .withFallback(ConfigFactory.load());
         return config;
-
 
     }
 
