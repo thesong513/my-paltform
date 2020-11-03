@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?><!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<configuration>
+    <!-- WARNING!!! This file is auto generated for documentation purposes ONLY! -->
+    <!-- WARNING!!! Any changes you make to this file will be ignored by Hive.   -->
+    <!-- WARNING!!! You must make your changes in hive-site.xml instead.         -->
+    <!-- Hive Execution Parameters -->
+
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>root</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>unic@123</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>
+            jdbc:mysql://slave2:3306/hive?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;useSSL=false
+        </value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>com.mysql.jdbc.Driver</value>
+    </property>
+    <!-- 到此结束代码 -->
+
+
+    <property>
+        <name>hive.server2.support.dynamic.service.discovery</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>hive.server2.zookeeper.namespace</name>
+        <value>hiveserver2_zk</value>
+    </property>
+
+    <property>
+        <name>hive.zookeeper.quorum</name>
+        <value>slave1:2181,slave2:2181,slave3:2181</value>
+    </property>
+
+    <property>
+        <name>hive.zookeeper.client.port</name>
+        <value>2181</value>
+    </property>
+
+
+    <property>
+        <name>hive.server2.thrift.bind.host</name>
+        <value>0.0.0.0</value>
+    </property>
+
+    <property>
+        <name>hive.server2.thrift.port</name>
+        <value>10001</value>
+    </property>
+</configuration>
