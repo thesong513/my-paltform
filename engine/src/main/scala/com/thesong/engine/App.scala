@@ -64,7 +64,18 @@ object App {
     val actorConf = AkkaUtils.getConfig(zkClient)
     val actorSystem = ActorSystem("system", actorConf)
 
-    Thread.sleep(Integer.MAX_VALUE)
+    val hostname = actorConf.getString("akka.remote.netty.tcp.hostname")
+    val port = actorConf.getString("akka.remote.netty.tcp.port")
+
+    val engineSession = new EngineSession(s"${hostname}:${port}", argv.get("engine.tag"))
+
+    val paralism:Int = sparkConf.getInt(config.PARALLELISM.key, config.PARALLELISM.defaultValue.get)
+
+    (1 to paralism).foreach { id => {
+      // 创建akka
+      actorSystem.actorOf(JobActor.apply(interpreter, engineSession, sparkConf), name = s"actor_${id}")
+    }
+    }
 
   }
 

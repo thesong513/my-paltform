@@ -142,5 +142,16 @@ object ZKUtils {
     platEngines
   }
 
+  /**注册jobActor引擎*/
+  def registerActorInPlatEngine(zkClient: ZkClient, path: String,data: String): Unit ={
+    try{
+      //如果父路径不存在，那么先创建父路径
+      createPersistentPathIfNotExists(zkClient , ZKUtils.valid_engine_path)
+      createEphemeralPathAndParentPathIfNotExits(zkClient ,path , data)
+    }catch {
+      case e: ZkNodeExistsException =>
+        throw new RuntimeException("注册jobActor引擎出现了异常")
+    }
+  }
 
 }
