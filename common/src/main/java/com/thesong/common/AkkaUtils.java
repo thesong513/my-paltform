@@ -50,22 +50,24 @@ public class AkkaUtils {
             }
         }
 
+        // port递增
         while (enginePorts.size() != 0) {
             while (enginePorts.contains(port)) {
                 port += 1;
             }
         }
 
+        // id递增
         while (engineIds.size() != 0) {
             while (enginePorts.contains(id)) {
                 id += 1;
             }
         }
 
-        //注册引擎到zk中去
+        //引擎注册到zk中去
         ZKUtils.registerEngineInZookeeper(zkClient, id, ip, port);
 
-        //封装Akka信息
+        //封装Akka config 信息
         Config config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port)
                 .withFallback(ConfigFactory.parseString("akka.actor.provider=akka.remote.RemoteActorRefProvider"))
                 .withFallback(ConfigFactory.parseString("akka.remote.netty.tcp.hostname=" + ip))

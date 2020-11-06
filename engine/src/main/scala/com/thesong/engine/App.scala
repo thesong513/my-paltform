@@ -1,6 +1,6 @@
 package com.thesong.engine
 
-import akka.actor.ActorSystem
+import akka.actor.{ActorSelection, ActorSystem}
 import com.thesong.common.AkkaUtils
 import com.thesong.engine.interpreter.SparkInterpreter
 import com.thesong.utils.{GlobalConfigUtils, ZKUtils}
@@ -69,14 +69,16 @@ object App {
 
     val engineSession = new EngineSession(s"${hostname}:${port}", argv.get("engine.tag"))
 
-    val paralism:Int = sparkConf.getInt(config.PARALLELISM.key, config.PARALLELISM.defaultValue.get)
+    val paralism: Int = sparkConf.getInt(config.PARALLELISM.key, config.PARALLELISM.defaultValue.get)
 
     (1 to paralism).foreach { id => {
       // 创建akka
+
       actorSystem.actorOf(JobActor.apply(interpreter, engineSession, sparkConf), name = s"actor_${id}")
     }
     }
-
+    val actor:ActorSelection = actorSystem.actorSelection("akka.tcp://client@192.168.0.193:3001/user/actor_1")
+    println(actor.anchorPath)
   }
 
 }

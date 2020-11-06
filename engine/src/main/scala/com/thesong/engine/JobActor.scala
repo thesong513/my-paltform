@@ -43,6 +43,7 @@ class JobActor (_interpreter:SparkInterpreter,
         |(____  /\___  >__|  \____/|__|    /____  > |__| (____  /__|   |__|
         |     \/     \/                         \/            \/
       """.stripMargin)
+    println(this.valid_engine_path)
     zkClient = ZKUtils.getZkClient(GlobalConfigUtils.getProp("zk.servers"))
     interpreter = _interpreter
     sparkSession = EngineSession.createSpark(sparkConf).newSession()
@@ -77,7 +78,7 @@ class JobActor (_interpreter:SparkInterpreter,
 
             /**
              * 处理前：
-             * line1；
+             * line1;
              * line2;
              * line3;
              *
@@ -87,7 +88,6 @@ class JobActor (_interpreter:SparkInterpreter,
             assemble_instruction = assemble_instruction.replaceAll("'", "\"").replaceAll("\n", " ")
             val response = interpreter.execute(assemble_instruction)
           }
-
         }
       }
       }

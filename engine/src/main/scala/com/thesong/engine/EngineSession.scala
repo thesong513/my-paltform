@@ -80,7 +80,7 @@ object EngineSession {
 
       //es
       .config("es.index.auto.create", "true") //在spark中自动创建es中的索引
-      .config("es.nodes", "cdh1") //设置在spark中连接es的url和端口
+      .config("es.nodes", "slave1") //设置在spark中连接es的url和端口
       .config("es.port", "9200")
 
       /**
