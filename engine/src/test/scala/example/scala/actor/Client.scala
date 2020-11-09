@@ -31,7 +31,7 @@ object Client extends App {
   val instruction =
     "val textFile = spark.sparkContext.textFile(\"hdfs://ns1/words\");"+
     "val count = textFile.flatMap(line=>line.split(\" \")).map(x=>(x,1)).reduceByKey(_+_);"+
-    "count.repartition(1).saveAsTextFile(\"hdfs://ns1/count1\")"
+    "count.repartition(1).saveAsTextFile(\"hdfs://ns1/count\")"
 
   val commandMode = CommandMode.CODE
   val variables = "[]"

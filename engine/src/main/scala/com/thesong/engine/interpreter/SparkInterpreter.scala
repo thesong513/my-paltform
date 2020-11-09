@@ -34,7 +34,6 @@ class SparkInterpreter extends AbstractSparkInterpreter {
     //spark local方式运行的时候才会创建sparkILoop对象
     sparkILoop.interpret(order)
     //    val tmpOrder = "val textFile = spark.sparkContext.textFile(\"hdfs://node01:9000/words\");val counts = textFile.flatMap(line => line.split(\" \")).map(word => (word, 1)).reduceByKey(_ + _);counts.repartition(1).saveAsTextFile(\"hdfs://node01:9000/words_count\");"
-    //    sparkILoop.interpret(order)
   }
 
   override protected def bind(name: String, className: String, value: Object, modifier: List[String]): Unit = {
