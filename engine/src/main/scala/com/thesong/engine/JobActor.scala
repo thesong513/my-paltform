@@ -3,8 +3,9 @@ package com.thesong.engine
 import java.io.{ByteArrayOutputStream, PrintStream}
 
 import akka.actor.{Actor, Props}
-import com.thesong.domain.{CommandMode, ResultDataType}
+import com.thesong.domain.{CommandMode, JobStatus, ResultDataType}
 import com.thesong.domain.engine.{Instruction, Job}
+import com.thesong.engine.interpreter.Interpreter.{ExecuteAborted, ExecuteError, ExecuteIncomplete, ExecuteResponse, ExecuteSuccess}
 import com.thesong.engine.interpreter.SparkInterpreter
 import com.thesong.utils.{GlobalConfigUtils, ZKUtils}
 import com.thesong.logging.Logging
@@ -74,6 +75,7 @@ class JobActor (_interpreter:SparkInterpreter,
           }
 
           case CommandMode.CODE => {
+            info("\n" + ("*" * 80) + "\n" + assemble_instruction + "\n" + ("*" * 80))
             job.mode = CommandMode.CODE
 
             /**
@@ -87,7 +89,11 @@ class JobActor (_interpreter:SparkInterpreter,
              */
             assemble_instruction = assemble_instruction.replaceAll("'", "\"").replaceAll("\n", " ")
             val response = interpreter.execute(assemble_instruction)
+            if(!storageJobStatus(response)){
+              warn("任务还没结束!")
+            }
           }
+          case _ => {}
         }
       }
       }
@@ -107,6 +113,38 @@ class JobActor (_interpreter:SparkInterpreter,
       """.stripMargin)
     interpreter.close()
     sparkSession.stop()
+  }
+
+  def storageJobStatus(response: ExecuteResponse):Boolean={
+    response match {
+      case e:ExecuteSuccess=>{
+        val take = (System.currentTimeMillis() - job.startTime.getTime) / 1000
+        job.takeTime = take
+        job.data = e.content.values.values.mkString("\n")
+        job.dataType = ResultDataType.PRE
+        job.jobStatus = JobStatus.FINISH
+        engineSession.batchJob.put(job.engineInfoAndGroup, job)
+        true
+      }
+      case e: ExecuteError=>{
+        job.jobStatus = JobStatus.FINISH
+        job.data = e.executeValue
+        job.success = false
+        job.dataType = ResultDataType.ERROR
+        engineSession.batchJob.put(job.engineInfoAndGroup, job)
+        true
+      }
+      case e: ExecuteAborted=>{
+        job.jobStatus = JobStatus.FINISH
+        job.data = e.message
+        job.success = false
+        job.dataType = ResultDataType.ERROR
+        engineSession.batchJob.put(job.engineInfoAndGroup, job)
+        true
+      }
+      case e:ExecuteIncomplete=>false
+      case _ =>true
+    }
   }
 
   /**
