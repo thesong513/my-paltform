@@ -5,7 +5,8 @@ package com.thesong.engine.antlr;
 }
 
 statement
-    : (sql ender)*;
+    : (sql ender)*
+    ;
 
 sql
     : ('load'|'LOAD') format '.'? path ('where' | 'WHERE')? expression? booleanExpression*  'as' tableName
