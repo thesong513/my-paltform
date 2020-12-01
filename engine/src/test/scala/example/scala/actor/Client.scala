@@ -32,7 +32,7 @@ object Client extends App {
 //    "val textFile = spark.sparkContext.textFile(\"hdfs://ns1/words\");"+
 //    "val count = textFile.flatMap(line=>line.split(\" \")).map(x=>(x,1)).reduceByKey(_+_);"+
 //    "count.repartition(1).saveAsTextFile(\"hdfs://ns1/count\")"
-  val instruction = "load text. `hdfs://ns1/test.dd` as tb;"
+  val instruction = "load text. `hdfs://ns1/test.dd` as tb;\n select * from tb;"
 
   val commandMode = CommandMode.SQL
   val variables = "[]"

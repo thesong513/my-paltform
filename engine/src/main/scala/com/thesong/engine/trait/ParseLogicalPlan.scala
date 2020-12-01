@@ -10,7 +10,6 @@ import com.thesong.engine.antlr.EngineParser.SqlContext
  */
 trait ParseLogicalPlan {
   def parse(ctx:SqlContext):Unit
-
 }
 
 trait ParseLogicalTools {
