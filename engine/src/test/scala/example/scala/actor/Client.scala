@@ -28,12 +28,13 @@ object Client extends App {
     |""".stripMargin
   )
 
-  val instruction =
-    "val textFile = spark.sparkContext.textFile(\"hdfs://ns1/words\");"+
-    "val count = textFile.flatMap(line=>line.split(\" \")).map(x=>(x,1)).reduceByKey(_+_);"+
-    "count.repartition(1).saveAsTextFile(\"hdfs://ns1/count\")"
+//  val instruction =
+//    "val textFile = spark.sparkContext.textFile(\"hdfs://ns1/words\");"+
+//    "val count = textFile.flatMap(line=>line.split(\" \")).map(x=>(x,1)).reduceByKey(_+_);"+
+//    "count.repartition(1).saveAsTextFile(\"hdfs://ns1/count\")"
+  val instruction = "load text. `hdfs://ns1/test.dd` as tb;"
 
-  val commandMode = CommandMode.CODE
+  val commandMode = CommandMode.SQL
   val variables = "[]"
   val token = ""
 
@@ -45,7 +46,6 @@ object Client extends App {
   val selection = clientSys.actorSelection("akka.tcp://system@" + actorAddr + "/user/" + actorName)
 
   Patterns.ask(selection, Instruction(commandMode, instruction, variables, token), new Timeout(Duration.create(10, "s")))
-
 
 }
 

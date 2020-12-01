@@ -5,17 +5,18 @@ import java.io.{ByteArrayOutputStream, PrintStream}
 import akka.actor.{Actor, Props}
 import com.thesong.domain.{CommandMode, JobStatus, ResultDataType}
 import com.thesong.domain.engine.{Instruction, Job}
-import com.thesong.engine.antlr.{EngineLexer, EngineParser}
+import com.thesong.engine.antlr.{EngineBaseListener, EngineLexer, EngineParser}
 import com.thesong.engine.interpreter.Interpreter.{ExecuteAborted, ExecuteError, ExecuteIncomplete, ExecuteResponse, ExecuteSuccess}
 import com.thesong.engine.interpreter.SparkInterpreter
 import com.thesong.utils.{GlobalConfigUtils, ZKUtils}
 import com.thesong.logging.Logging
 import org.I0Itec.zkclient.ZkClient
-import org.antlr.runtime.CommonTokenStream
-import org.antlr.v4.runtime.ANTLRInputStream
+import org.antlr.v4.runtime.{ANTLRInputStream, CommonTokenStream}
 import org.antlr.v4.runtime.tree.ParseTreeWalker
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
+
+
 
 /**
  * @Author thesong
@@ -75,8 +76,8 @@ class JobActor (_interpreter:SparkInterpreter,
 
         commandMode match {
           case CommandMode.SQL => {
-            val engineSQLExecListener = new EngineSQLExecListener
-            JobActor.paseRule(assemble_instruction, engineSQLExecListener)
+            val engineSQLExecListener = new EngineSQLExecListener(sparkSession)
+            JobActor.parseRule(assemble_instruction, engineSQLExecListener)
 
           }
 
@@ -173,22 +174,21 @@ class JobActor (_interpreter:SparkInterpreter,
     }
   }
 
+
 }
 
 
 object JobActor{
 
-  def paseRule(input:String,listener: EngineSQLExecListener):Unit={
+  def parseRule(input:String,listener:EngineBaseListener):Unit={
     val loadLexer = new EngineLexer(new ANTLRInputStream(input))
     val tokens = new CommonTokenStream(loadLexer)
-    val parser = new EngineParser(tokens)
+    var parser = new EngineParser(tokens)
     val state = parser.statement()
-    ParseTreeWalker.DEFAULT.walk(listener, state)
-
+    ParseTreeWalker.DEFAULT.walk(listener,state)
   }
 
-
-  def apply(_interpreter: SparkInterpreter, engineSession: EngineSession, sparkConf: SparkConf):Props  = {
-    Props(new JobActor(_interpreter, engineSession, sparkConf))
+  def apply(sparkInterpreter: SparkInterpreter, engineSession: EngineSession, sparkConf: SparkConf): Props = {
+    Props(new JobActor(sparkInterpreter, engineSession, sparkConf))
   }
 }

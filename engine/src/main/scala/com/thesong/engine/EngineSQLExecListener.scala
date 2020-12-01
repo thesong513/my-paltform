@@ -3,6 +3,7 @@ package com.thesong.engine
 import com.thesong.engine.adaptor.DML.LoadAdaptor
 import com.thesong.engine.antlr.EngineBaseListener
 import com.thesong.engine.antlr.EngineParser.SqlContext
+import org.apache.spark.sql.SparkSession
 
 /**
  * @Author thesong
@@ -10,24 +11,26 @@ import com.thesong.engine.antlr.EngineParser.SqlContext
  * @Version 1.0
  * @Describe
  */
-class EngineSQLExecListener extends EngineBaseListener{
+class EngineSQLExecListener(_sparkSession: SparkSession) extends EngineBaseListener {
 
-  override def exitSql(ctx: SqlContext):Unit={
+  def sparkSession = _sparkSession
+
+  override def exitSql(ctx: SqlContext): Unit = {
     ctx.getChild(0).getText.toLowerCase() match {
-      case "load"=>{
+      case "load" => {
         println("load操作")
         new LoadAdaptor(this).parse(ctx)
       }
 
-      case "select"=>
-      case "save"=>
-      case "create"=>
-      case "insert"=>
-      case "drop"=>
-      case "truncate"=>
-      case "show"=>
-      case "explain"=>
-      case "include"=>
+      case "select" =>
+      case "save" =>
+      case "create" =>
+      case "insert" =>
+      case "drop" =>
+      case "truncate" =>
+      case "show" =>
+      case "explain" =>
+      case "include" =>
     }
   }
 
