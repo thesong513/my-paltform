@@ -2,7 +2,7 @@ package com.thesong.engine
 
 import java.util.concurrent.ConcurrentHashMap
 
-import com.thesong.engine.adaptor.DML.LoadAdaptor
+import com.thesong.engine.adaptor.DML.{LoadAdaptor, SelectAdaptor}
 import com.thesong.engine.antlr.EngineBaseListener
 import com.thesong.engine.antlr.EngineParser.SqlContext
 import org.apache.spark.sql.{DataFrame, SparkSession}
@@ -37,7 +37,10 @@ class EngineSQLExecListener(_sparkSession: SparkSession) extends EngineBaseListe
         println("load操作")
         new LoadAdaptor(this).parse(ctx)
       }
-      case "select" =>
+      case "select" =>{
+        println("select操作")
+        new SelectAdaptor(this).parse(ctx);
+      }
       case "save" =>
       case "create" =>
       case "insert" =>
