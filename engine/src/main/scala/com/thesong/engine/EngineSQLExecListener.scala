@@ -20,7 +20,7 @@ class EngineSQLExecListener(_sparkSession: SparkSession) extends EngineBaseListe
   //保存结果，方便监听器对象获取。可以返回客户端
   private val _result = new ConcurrentHashMap[String, String]()
 
-  def addResult(k:String,v:String) = {
+  def addResult(k:String,v:String):EngineSQLExecListener = {
     _result.put(k,v)
     this
   }

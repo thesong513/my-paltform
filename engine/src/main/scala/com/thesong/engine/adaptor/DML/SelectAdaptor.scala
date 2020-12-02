@@ -31,7 +31,6 @@ class SelectAdaptor(engineSQLExecListener: EngineSQLExecListener) extends ParseL
     val tmpTable = UUID.randomUUID().toString.replace("-","")
     sparkSession.sql(originalText).createOrReplaceTempView(tmpTable)
     engineSQLExecListener.addResult("tmpTable",tmpTable)
-    engineSQLExecListener.sparkSession.sql(s"select * from ${tmpTable}").show()
-
+    val frame = engineSQLExecListener.sparkSession.sql(s"select * from ${tmpTable}")
   }
 }
