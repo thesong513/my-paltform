@@ -3,7 +3,7 @@ package com.thesong.engine.adaptor.DML
 import java.util.UUID
 
 import com.thesong.engine.EngineSQLExecListener
-import com.thesong.engine.`trait`.ParseLogicalPlan
+import com.thesong.engine.`trait`.{ParseLogicalPlan, ParseLogicalTools}
 import com.thesong.engine.antlr.{EngineLexer, EngineParser}
 import org.antlr.v4.runtime.misc.Interval
 
@@ -16,7 +16,7 @@ import org.antlr.v4.runtime.misc.Interval
  */
 
 
-class SelectAdaptor(engineSQLExecListener: EngineSQLExecListener) extends ParseLogicalPlan {
+class SelectAdaptor(engineSQLExecListener: EngineSQLExecListener) extends ParseLogicalPlan with ParseLogicalTools{
   override def parse(ctx: EngineParser.SqlContext): Unit = {
     val sparkSession = engineSQLExecListener.sparkSession
     // 需要从输入中获取select语句
@@ -31,6 +31,6 @@ class SelectAdaptor(engineSQLExecListener: EngineSQLExecListener) extends ParseL
     val tmpTable = UUID.randomUUID().toString.replace("-","")
     sparkSession.sql(originalText).createOrReplaceTempView(tmpTable)
     engineSQLExecListener.addResult("tmpTable",tmpTable)
-    val frame = engineSQLExecListener.sparkSession.sql(s"select * from ${tmpTable}")
+//    engineSQLExecListener.sparkSession.sql(s"select * from ${tmpTable}").show(10)
   }
 }

@@ -14,7 +14,7 @@ import org.I0Itec.zkclient.ZkClient
 import org.antlr.v4.runtime.{ANTLRInputStream, CommonTokenStream}
 import org.antlr.v4.runtime.tree.ParseTreeWalker
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{EngineBridge, SparkSession}
 
 
 
@@ -77,7 +77,8 @@ class JobActor (_interpreter:SparkInterpreter,
         commandMode match {
           case CommandMode.SQL => {
             val engineSQLExecListener = new EngineSQLExecListener(sparkSession)
-            JobActor.parseRule(assemble_instruction, engineSQLExecListener)
+//            JobActor.parseRule(assemble_instruction, engineSQLExecListener)
+            parseSQL(assemble_instruction, engineSQLExecListener)
 
           }
 
@@ -172,6 +173,57 @@ class JobActor (_interpreter:SparkInterpreter,
         sender ! job
       }
     }
+  }
+
+  def reportResult(listener: EngineSQLExecListener):Unit={
+    val hdfs_path = s"hdfs://ns1/tmp/engine/result/sql_result_${System.currentTimeMillis()}"
+    job.hdfs_path = hdfs_path
+
+    //封装任务状态信息
+    listener.result() match {
+      case x if(x.containsKey("tmpTable"))=>{
+        val tableDataframe = sparkSession.table(listener.getResult("tmpTable"))
+        tableDataframe.show(10)
+        job.data = EngineBridge.toJSON(tableDataframe).mkString("[",",","]")
+        job.schema = tableDataframe.schema.fields.map(_.name).mkString(",")
+        job.jobStatus = JobStatus.FINISH
+        job.takeTime = System.currentTimeMillis() - job.startTime.getTime
+        engineSession.batchJob.put(job.engineInfoAndGroup,job)
+        // 数据写入hdfs
+        tableDataframe.write.json(hdfs_path)
+      }
+      case x if(x.containsKey("explain"))=>{
+
+      }
+      case _=>{
+      }
+    }
+  }
+
+  /***
+   * 把规则解析和结果汇报进行一次封装
+   */
+  def parseSQL(input:String,listener: EngineSQLExecListener):Unit={
+
+    try {
+      JobActor.parseRule(input,listener)
+      reportResult(listener)
+    }catch {
+      case e:Exception=>{
+        e.printStackTrace()
+        job.success = false
+        val out = new ByteArrayOutputStream()
+        e.printStackTrace(new PrintStream(out))
+        //存储异常
+        job.data = new String(out.toByteArray)
+        job.dataType =ResultDataType.ERROR
+        out.close()
+      }
+      case _=>{}
+    }
+    job.jobStatus = JobStatus.FINISH
+    engineSession.batchJob.put(job.engineInfoAndGroup, job)
+
   }
 
 

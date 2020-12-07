@@ -4,8 +4,8 @@ import java.util.concurrent.ConcurrentHashMap
 
 import com.thesong.engine.adaptor.DML.{LoadAdaptor, SelectAdaptor}
 import com.thesong.engine.antlr.EngineBaseListener
-import com.thesong.engine.antlr.EngineParser.SqlContext
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import com.thesong.engine.antlr.EngineParser.{OverwriteContext, SqlContext}
+import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
 /**
  * @Author thesong
@@ -20,16 +20,16 @@ class EngineSQLExecListener(_sparkSession: SparkSession) extends EngineBaseListe
   //保存结果，方便监听器对象获取。可以返回客户端
   private val _result = new ConcurrentHashMap[String, String]()
 
-  def addResult(k:String,v:String):EngineSQLExecListener = {
-    _result.put(k,v)
+  def addResult(k: String, v: String): EngineSQLExecListener = {
+    _result.put(k, v)
     this
   }
 
-  def getResult(k:String)={
+  def getResult(k: String) = {
     _result.getOrDefault(k, "")
   }
 
-  def result()=_result
+  def result() = _result
 
   override def exitSql(ctx: SqlContext): Unit = {
     ctx.getChild(0).getText.toLowerCase() match {
@@ -37,11 +37,13 @@ class EngineSQLExecListener(_sparkSession: SparkSession) extends EngineBaseListe
         println("load操作")
         new LoadAdaptor(this).parse(ctx)
       }
-      case "select" =>{
+      case "select" => {
         println("select操作")
         new SelectAdaptor(this).parse(ctx);
       }
-      case "save" =>
+      case "save" => {
+        println("save操作")
+      }
       case "create" =>
       case "insert" =>
       case "drop" =>

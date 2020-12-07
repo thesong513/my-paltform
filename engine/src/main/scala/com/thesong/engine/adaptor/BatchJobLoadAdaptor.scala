@@ -35,10 +35,11 @@ class BatchJobLoadAdaptor(engineSQLExecListener: EngineSQLExecListener,
       case _ => {}
     }
 
+    // 注册进入sparkSession
     table.createTempView(tavleName)
     //
-    val retDf = engineSQLExecListener.sparkSession.sql("select * from tb");
-    retDf.show(numRows = 10)
+//    val retDf = engineSQLExecListener.sparkSession.sql("select * from tb");
+//    retDf.show(numRows = 10)
   }
 
 }

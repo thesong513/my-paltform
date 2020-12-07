@@ -48,6 +48,7 @@ class LoadAdaptor(engineSQLExecListener: EngineSQLExecListener) extends ParseLog
       println(s"流式处理：formmat=${format},path:${path},tablename:${tableName}")
     } else {
       println(s"离线处理：formmat=${format},path:${path},tablename:${tableName}")
+      // load 数据
       new BatchJobLoadAdaptor(engineSQLExecListener, format, path, tableName, option).parse
     }
   }
