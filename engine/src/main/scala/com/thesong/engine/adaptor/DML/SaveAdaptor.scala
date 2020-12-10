@@ -2,8 +2,9 @@ package com.thesong.engine.adaptor.DML
 
 import com.thesong.engine.EngineSQLExecListener
 import com.thesong.engine.`trait`.{ParseLogicalPlan, ParseLogicalTools}
+import com.thesong.engine.adaptor.BatchJobSaveAdaptor
 import com.thesong.engine.antlr.EngineParser
-import com.thesong.engine.antlr.EngineParser.{AppendContext, ErrorIfExistsContext, ExpressionContext, FormatContext, IgnoreContext, OverwriteContext, PathContext, SqlContext, TableNameContext, UpdateContext}
+import com.thesong.engine.antlr.EngineParser.{AppendContext, BooleanExpressionContext, ColContext, ErrorIfExistsContext, ExpressionContext, FormatContext, IgnoreContext, NumPartitionContext, OverwriteContext, PathContext, SqlContext, TableNameContext, UpdateContext}
 import org.apache.spark.sql.{DataFrame, SaveMode}
 
 /**
@@ -58,8 +59,39 @@ class SaveAdaptor(engineSQLExecListener: EngineSQLExecListener) extends ParseLog
         case tag:ExpressionContext=>{
           // where关键字后面的条件获取方式
           option+=(cleanStr(tag.identifier().getText)->cleanStr(tag.STRING().getText))
+          // select * from where name=? and age=?
         }
+        case tag:BooleanExpressionContext=>{
+          option+=(cleanStr(tag.expression().identifier().getText)->cleanStr(tag.expression().STRING().getText))
+        }
+        case tag:ColContext=>{
+          partitionByCol = cleanStr(tag.getText).split(",")
+        }
+        case tag:NumPartitionContext=>{
+          numPartition = tag.getText.toInt
+        }
+        case _=>{}
       }
     })
+
+    // 流处理和批处理判断
+    if(engineSQLExecListener.env().contains("stream")){
+      // 流处理save操作
+
+    }else{
+      //批处理save操作
+      new BatchJobSaveAdaptor(
+        engineSQLExecListener,
+        data,
+        save_path,
+        tableName,
+        format,
+        mode,
+        partitionByCol,
+        numPartition,
+        option
+      ).parse
+
+    }
   }
 }

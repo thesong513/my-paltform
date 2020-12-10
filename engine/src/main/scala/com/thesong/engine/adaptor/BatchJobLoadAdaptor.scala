@@ -2,6 +2,7 @@ package com.thesong.engine.adaptor
 
 import com.thesong.engine.EngineSQLExecListener
 import com.thesong.engine.`trait`.ParseLogicalTools
+import com.thesong.utils.GlobalConfigUtils
 import org.apache.spark.sql.{DataFrame, DataFrameReader}
 
 /**
@@ -22,12 +23,17 @@ class BatchJobLoadAdaptor(engineSQLExecListener: EngineSQLExecListener,
     val frameReader: DataFrameReader = engineSQLExecListener.sparkSession.read
     frameReader.options(option)
     format match {
-      case "jdbc" => {}
+      case "jdbc" => {
+        frameReader.option("dbtable", path)
+          .option("driver", option.getOrElse("driver", GlobalConfigUtils.getProp("jdbc.driver")))
+          .option("url", option.getOrElse("url", GlobalConfigUtils.getProp("jdbc.url")))
+        table = frameReader.load()
+      }
       case "hbase" => {}
       case "es" => {}
       case "kafka" => {}
-      case "json"|"csv"|"orc"|"parquet"|"text" => {
-        table = frameReader.option("header","true").format(format).load(path)
+      case "json" | "csv" | "orc" | "parquet" | "text" => {
+        table = frameReader.option("header", "true").format(format).load(path)
       }
       case "xml" => {}
       case "redis" => {}
@@ -38,8 +44,8 @@ class BatchJobLoadAdaptor(engineSQLExecListener: EngineSQLExecListener,
     // 注册进入sparkSession
     table.createTempView(tavleName)
     //
-//    val retDf = engineSQLExecListener.sparkSession.sql("select * from tb");
-//    retDf.show(numRows = 10)
+    //    val retDf = engineSQLExecListener.sparkSession.sql("select * from tb");
+    //    retDf.show(numRows = 10)
   }
 
 }

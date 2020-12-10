@@ -22,18 +22,27 @@ object Client extends App {
   val port = 3001
   val conf = ConfigFactory.parseString(
     s"""
-    |akka.actor.provider = "akka.remote.RemoteActorRefProvider"
-    |akka.remote.netty.tcp.hostname = ${host}
-    |akka.remote.netty.tcp.port = ${port}
-    |""".stripMargin
+       |akka.actor.provider = "akka.remote.RemoteActorRefProvider"
+       |akka.remote.netty.tcp.hostname = ${host}
+       |akka.remote.netty.tcp.port = ${port}
+       |""".stripMargin
   )
 
-//  val instruction =
-//    "val textFile = spark.sparkContext.textFile(\"hdfs://ns1/words\");"+
-//    "val count = textFile.flatMap(line=>line.split(\" \")).map(x=>(x,1)).reduceByKey(_+_);"+
-//    "count.repartition(1).saveAsTextFile(\"hdfs://ns1/count\")"
-  val instruction = "load text. `hdfs://ns1/test.dd` as tb;\n select * from tb;"
+  //  val instruction =
+  //    "val textFile = spark.sparkContext.textFile(\"hdfs://ns1/words\");"+
+  //    "val count = textFile.flatMap(line=>line.split(\" \")).map(x=>(x,1)).reduceByKey(_+_);"+
+  //    "count.repartition(1).saveAsTextFile(\"hdfs://ns1/count\")"
+  //  val instruction = "load text. `hdfs://ns1/test.dd` as tb;\n select * from tb;"
 
+  //  val instruction = "load text. `hdfs://ns1/test.dd` as tb;\n select * from tb;\n save tb as text. `hdfs://ns1/testData` where coalesce 5"
+  //  val instruction = "load text. `hdfs://ns1/test.dd` as tb;\n explain select * from tb;"
+  val instruction = "load jdbc.db \n" +
+    "where driver=\"com.mysql.jdbc.Driver\" \n      " +
+    "and url=\"jdbc:mysql://localhost:3306/mysql?characterEncoding=utf8\" \n      " +
+    "and user=\"root\" \n      " +
+    "and password=\"jufeng@2020\" \n" +
+    "as tb; \n" +
+    "SELECT * FROM tb LIMIT 100;"
   val commandMode = CommandMode.SQL
   val variables = "[]"
   val token = ""

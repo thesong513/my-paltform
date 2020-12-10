@@ -192,8 +192,12 @@ class JobActor (_interpreter:SparkInterpreter,
         // 数据写入hdfs
         tableDataframe.write.json(hdfs_path)
       }
-      case x if(x.containsKey("explain"))=>{
-
+      case x if(x.containsKey("explainStr"))=>{
+        job.data = listener.getResult("explainStr")
+        job.dataType = ResultDataType.PRE
+        job.jobStatus = JobStatus.FINISH
+        job.takeTime = System.currentTimeMillis()-job.startTime.getTime
+        engineSession.batchJob.put(job.engineInfoAndGroup,job)
       }
       case _=>{
       }

@@ -34,6 +34,7 @@ class LoadAdaptor(engineSQLExecListener: EngineSQLExecListener) extends ParseLog
         }
         case s: BooleanExpressionContext => {
           //ps = 100
+          // todo bug
           option += (cleanStr(s.expression().getText) -> cleanStr(s.expression().STRING().getText))
         }
         case s: TableNameContext => {
@@ -46,6 +47,7 @@ class LoadAdaptor(engineSQLExecListener: EngineSQLExecListener) extends ParseLog
     //判断sparkjob 是流式还是离线
     if (option.contains("spark.job.mode") && option("spark.job.mode").equals("stream")) {
       println(s"流式处理：formmat=${format},path:${path},tablename:${tableName}")
+      engineSQLExecListener.addEnv("stream","true")
     } else {
       println(s"离线处理：formmat=${format},path:${path},tablename:${tableName}")
       // load 数据
