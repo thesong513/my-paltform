@@ -24,7 +24,7 @@ class BatchJobLoadAdaptor(engineSQLExecListener: EngineSQLExecListener,
     frameReader.options(option)
     format match {
       case "jdbc" => {
-        frameReader.option("dbtable", path)
+         frameReader.option("dbtable", path)
           .option("driver", option.getOrElse("driver", GlobalConfigUtils.getProp("jdbc.driver")))
           .option("url", option.getOrElse("url", GlobalConfigUtils.getProp("jdbc.url")))
         table = frameReader.load()

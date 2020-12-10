@@ -65,6 +65,10 @@
         <value>2181</value>
     </property>
 
+    <property>
+        <name>hive.exec.scratchdir</name>
+        <value>hdfs://slave1:8020/tmp/hive</value>
+    </property>
 
     <property>
         <name>hive.server2.thrift.bind.host</name>

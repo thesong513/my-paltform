@@ -91,7 +91,7 @@ object EngineSession {
 
       .master("local[*]")
       //启动spark sql支持hive，能够和hive做集成，这样做之后我们就可以通过sparksqlcontext穿件hivesqlcontext对象
-      .enableHiveSupport() //sqlcontext.sql()
+//      .enableHiveSupport() //sqlcontext.sql()
       .getOrCreate()
     spark.sparkContext.setLogLevel("WARN")
     spark

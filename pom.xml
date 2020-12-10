@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.thesong.my-platform</groupId>
-    <artifactId>org.thesong.my-platform</artifactId>
+    <artifactId>my-platform</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <description>所有模块的公共继承模块</description>
