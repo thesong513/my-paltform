@@ -17,7 +17,7 @@ trait ParseLogicalTools {
     str match {
       //把sql输出的内容提取出来
       case x if x.startsWith("```") && x.endsWith("```") => x.substring(3, x.length - 3)
-      case x if x.startsWith("'") && x.startsWith("\"") || x.startsWith("`") => x.substring(1, x.length - 1)
+      case x if x.startsWith("'") || x.startsWith("\"") || x.startsWith("`") => x.substring(1, x.length - 1)
       case _ => str
     }
   }

@@ -35,7 +35,7 @@ class LoadAdaptor(engineSQLExecListener: EngineSQLExecListener) extends ParseLog
         case s: BooleanExpressionContext => {
           //ps = 100
           // todo bug
-          option += (cleanStr(s.expression().getText) -> cleanStr(s.expression().STRING().getText))
+          option += (cleanStr(s.expression().identifier().getText) -> cleanStr(s.expression().STRING().getText))
         }
         case s: TableNameContext => {
           tableName += s.getText

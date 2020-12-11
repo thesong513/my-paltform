@@ -38,7 +38,7 @@ object Client extends App {
   //  val instruction = "load text. `hdfs://ns1/test.dd` as tb;\n explain select * from tb;"
   val instruction = "load jdbc.db \n" +
     "where driver=\"com.mysql.jdbc.Driver\" \n      " +
-    "and url=\"jdbc:mysql://localhost:3306/mysql?characterEncoding=utf8\" \n      " +
+    "and url=\"jdbc:mysql://localhost:3306/mysql?characterEncoding=utf8&useSSL=false&serverTimezone=UTC\" \n      " +
     "and user=\"root\" \n      " +
     "and password=\"jufeng@2020\" \n" +
     "as tb; \n" +

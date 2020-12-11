@@ -27,7 +27,7 @@ class BatchJobLoadAdaptor(engineSQLExecListener: EngineSQLExecListener,
          frameReader.option("dbtable", path)
           .option("driver", option.getOrElse("driver", GlobalConfigUtils.getProp("jdbc.driver")))
           .option("url", option.getOrElse("url", GlobalConfigUtils.getProp("jdbc.url")))
-        table = frameReader.load()
+        table = frameReader.format("org.apache.spark.sql.execution.customDatasource.jdbc").load()
       }
       case "hbase" => {}
       case "es" => {}

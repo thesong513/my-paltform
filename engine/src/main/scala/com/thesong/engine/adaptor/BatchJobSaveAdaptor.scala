@@ -1,6 +1,7 @@
 package com.thesong.engine.adaptor
 
 import com.thesong.engine.EngineSQLExecListener
+import com.thesong.utils.GlobalConfigUtils
 import org.apache.spark.sql.{DataFrame, DataFrameWriter, Row, SaveMode}
 
 /**
@@ -37,7 +38,11 @@ class BatchJobSaveAdaptor(
 
       }
       case "jdbc" => {
-
+        writer.format("org.apache.spark.sql.execution.customDatasource.jdbc")
+          .option("dirver", option.getOrElse("driver", GlobalConfigUtils.getProp("jdbc.driver")))
+          .option("url", option.getOrElse("url", GlobalConfigUtils.getProp("jdbc.url")))
+          .option("dbtable",savePath)
+          .save()
       }
       case "hive" => {
 
